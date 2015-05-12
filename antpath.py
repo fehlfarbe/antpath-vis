@@ -43,7 +43,7 @@ if __name__ == '__main__':
     detector.outputDirectory = options.output
     
     if detector.loadVideoFile(options.filename):
-        try:
-            detector.detect()
-        except Exception:
-            exit()
+        #try:
+        detector.detect()
+        #except Exception:
+        #    exit()
