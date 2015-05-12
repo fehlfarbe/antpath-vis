@@ -17,7 +17,7 @@ class AntPathDetector(object):
     frameNr = 0
     scale = 0.4
     
-    outputDirectory = "out_%d" % time.time()
+    outputDirectory = None
     debug = False
     
     videoCap = None
@@ -32,8 +32,11 @@ class AntPathDetector(object):
         pass
         
     def loadVideoFile(self, filename):
-        filename = os.path.abspath(filename)
         print "loading video %s" % filename
+        try:
+            filename = int(filename)
+        except:
+            filename = os.path.abspath(filename)
         self.videoCap = cv2.VideoCapture()
         self.frameNr = 0
         
@@ -73,7 +76,13 @@ class AntPathDetector(object):
             
             cv2.accumulateWeighted(resized,average,self.alpha)
             diff = cv2.absdiff(resized, cv2.convertScaleAbs(average))
-            ret,diff = cv2.threshold(diff,10,255,cv2.THRESH_TOZERO)
+            #print type(diff), diff.dtype, diff.shape
+            diff_gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+            ret, diff = cv2.threshold(diff_gray, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+            print ret
+            if ret <= 5:
+                diff = np.zeros(diff.shape, dtype=diff.dtype)
+            diff = cv2.cvtColor(diff, cv2.COLOR_GRAY2BGR)
             
             if self.frameNr > self.minFrames:
                 path = np.maximum(diff, path)
@@ -105,7 +114,8 @@ class AntPathDetector(object):
                 outFrame[0:resized_width, resized_height:resized_height*2] = diff
                 outFrame[resized_width:resized_width*2, 0:resized_height] = blend
                 outFrame[resized_width:resized_width*2, resized_height:resized_height*2] = averagePathGray
-                cv2.imwrite(os.path.join(self.outputDirectory, "%05d.png" % self.frameNr), outFrame)
+                if self.outputDirectory is not None:
+                    cv2.imwrite(os.path.join(self.outputDirectory, "%05d.png" % self.frameNr), outFrame)
 
                 if self.showImageCallback:
                     #cv2.imshow("123", outFrame)
