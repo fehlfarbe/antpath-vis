@@ -14,10 +14,10 @@ if __name__ == '__main__':
     parser.add_option("-f", "--file",
                   action="store", type="string", dest="filename",
                   help="Input videofile")
-    parser.add_option("-s", "--scale",
-                  action="store", type="float", dest="scale",
-                  default=0.4,
-                  help="Scale video to scale * size")
+    #parser.add_option("-s", "--scale",
+    #              action="store", type="float", dest="scale",
+    #              default=0.4,
+    #              help="Scale video to scale * size")
     parser.add_option("-o", "--output",
                   action="store", type="string", dest="output",
                   default=None,
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         
     detector = AntPathDetector()
     ### setup detector
-    detector.scale = options.scale
+    #detector.scale = options.scale
     detector.debug = options.debug
     detector.outputDirectory = options.output
     
